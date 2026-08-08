@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.girp.dev/incident-intake/form-result.json",
+  "title": "Incident Intake FormResult",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "_id",
+    "formKey",
+    "formVersion",
+    "answers",
+    "actor",
+    "submittedAt",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "_id": {
+      "description": "MongoDB ObjectId as string",
+      "type": "string",
+      "pattern": "^[a-f0-9]{24}$"
+    },
+    "formKey": {
+      "type": "string",
+      "description": "Unique identifier of the Intake form"
+    },
+    "formVersion": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Version number of the form definition"
+    },
+    "formHash": {
+      "type": ["string", "null"],
+      "description": "Schema hash that was embedded in the form HTML"
+    },
+    "schemaHash": {
+      "type": ["string", "null"],
+      "description": "Alias kept for backwards compatibility (same as formHash)"
+    },
+    "answers": {
+      "type": "array",
+      "description": "Latest answer for every question that has been submitted",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["q", "value"],
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Question identifier"
+          },
+          "q_name": {
+            "type": "string",
+            "description": "Localised label that was shown to the participant"
+          },
+          "value": {
+            "description": "Captured answer payload (mirrors the type of the question)",
+            "oneOf": [
+              { "type": "string" },
+              { "type": "number" },
+              { "type": "boolean" },
+              { "type": "array" },
+              { "type": "object" },
+              { "type": "null" }
+            ]
+          }
+        }
+      }
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sessionId"],
+      "properties": {
+        "sessionId": {
+          "type": "string",
+          "description": "Client session identifier (matches FormSession.sessionId)"
+        },
+        "userId": {
+          "type": ["string", "null"],
+          "description": "Reserved for authenticated users (not set for anonymous intake)"
+        }
+      }
+    },
+    "scoreMeta": {
+      "type": "object",
+      "description": "Session metadata: submission status and variable state at time of persistence",
+      "additionalProperties": true,
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["in-progress", "completed", "abandoned"]
+        },
+        "variablesSnapshot": {
+          "type": "object",
+          "description": "Variable state at the time of this persistence"
+        }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "description": "Additional metadata provided by the intake process",
+      "additionalProperties": true,
+      "properties": {
+        "identityName": {
+          "type": ["string", "null"],
+          "description": "Participant name as entered in the identity question"
+        },
+        "clientMeta": {
+          "type": ["object", "null"],
+          "description": "Client context (user agent, language, etc.)"
+        },
+        "lastEventAt": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Timestamp of the latest received response"
+        },
+        "completedAt": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Timestamp when the intake was marked complete"
+        }
+      }
+    },
+    "submittedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of the latest response stored for this document"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Document creation timestamp (Mongoose)"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Document update timestamp (Mongoose)"
+    },
+    "__v": {
+      "type": ["integer", "null"],
+      "description": "Mongoose internal version key"
+    }
+  }
+}
