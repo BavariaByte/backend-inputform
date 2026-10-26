@@ -1,0 +1,17 @@
+node_modules
+npm-debug.log
+Dockerfile
+.dockerignore
+.git
+.gitignore
+.gitlab-ci.yml
+.env
+.env.example
+.npmrc
+.DS_Store
+**/.DS_Store
+Findings.txt
+README.md
+coverage
+.nyc_output
+*.log
